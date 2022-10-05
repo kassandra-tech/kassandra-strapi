@@ -8,6 +8,7 @@ WORKDIR /app/src
 # Install app dependencies
 COPY package*.json ./
 RUN npm install --only=production
+RUN npm run build
 
 # Bundle app source
 COPY . .

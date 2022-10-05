@@ -11,10 +11,20 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Fetch secrets
+          command: |
+            echo HOST=${HOST} >> .env
+            echo PORT=${PORT} >> .env
+            echo APP_KEYS=${APP_KEYS} >> .env
+            echo API_TOKEN_SALT=${API_TOKEN_SALT} >> .env
+            echo ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET} >> .env
+            echo JWT_SECRET=${JWT_SECRET} >> .env
+      - run:
           name: Build and Push
           command: |
             set -x
             sudo curl https://cli-assets.heroku.com/install.sh | sh
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a kassandra-strapi admin
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a kassandra-strapi admin
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a kassandra-strapi web
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a kassandra-strapi web
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku ps:scale web=1 -a kassandra-strapi
